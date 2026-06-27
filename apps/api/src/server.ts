@@ -23,8 +23,10 @@ export function buildServer() {
   app.get("/tasks", async () => ({ tasks: tasks.list() }));
   app.post("/pairings", async () => pairings.create(config.PAIRING_TTL_SECONDS));
 
-  app.get("/ws", { websocket: true }, (connection) => {
-    relay.attach(connection);
+  app.register(async (wsRoutes) => {
+    wsRoutes.get("/ws", { websocket: true }, (socket) => {
+      relay.attach(socket);
+    });
   });
 
   return app;
