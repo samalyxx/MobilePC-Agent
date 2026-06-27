@@ -11,6 +11,7 @@
   ],
   "scripts": {
     "build": "npm -w @mobilepc/shared run build && npm -w @mobilepc/api run build && npm -w @mobilepc/windows-agent run build && npm -w @mobilepc/web run build",
+    "setup:local": "node scripts/setup-local.mjs",
     "dev:api": "npm -w @mobilepc/api run dev",
     "dev:agent": "npm -w @mobilepc/windows-agent run dev",
     "dev:web": "npm -w @mobilepc/web run dev",

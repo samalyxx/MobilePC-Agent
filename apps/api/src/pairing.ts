@@ -17,8 +17,17 @@ export interface PairingSecret {
   expiresAt: string;
 }
 
+export interface DevPairingConfig {
+  enabled: boolean;
+  deviceId: string;
+  agentToken: string;
+  mobileToken: string;
+}
+
 export class PairingStore {
   private readonly pairings = new Map<string, PairingRecord>();
+
+  constructor(private readonly devPairing?: DevPairingConfig) {}
 
   create(ttlSeconds: number): PairingSecret {
     const code = String(Math.floor(100000 + Math.random() * 900000));
@@ -45,6 +54,7 @@ export class PairingStore {
   }
 
   verify(deviceId: string, token: string, role: "agent" | "mobile"): boolean {
+    if (this.verifyDevPairing(deviceId, token, role)) return true;
     this.prune();
     for (const record of this.pairings.values()) {
       if (record.deviceId !== deviceId) continue;
@@ -62,5 +72,12 @@ export class PairingStore {
     for (const [code, record] of this.pairings) {
       if (record.expiresAt < now) this.pairings.delete(code);
     }
+  }
+
+  private verifyDevPairing(deviceId: string, token: string, role: "agent" | "mobile"): boolean {
+    if (!this.devPairing?.enabled) return false;
+    if (deviceId !== this.devPairing.deviceId) return false;
+    const expected = role === "agent" ? this.devPairing.agentToken : this.devPairing.mobileToken;
+    return token === expected;
   }
 }

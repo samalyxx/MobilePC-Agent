@@ -37,6 +37,14 @@ export function useMobilePc() {
     status.value = "pairing_ready";
   }
 
+  function useLocalDemoPairing() {
+    pairCode.value = "local-dev";
+    deviceId.value = config.public.devDeviceId;
+    agentToken.value = config.public.devAgentToken;
+    mobileToken.value = config.public.devMobileToken;
+    status.value = "local_demo_ready";
+  }
+
   function connectMobile() {
     if (!deviceId.value || !mobileToken.value) return;
     socket?.close();
@@ -119,6 +127,7 @@ export function useMobilePc() {
     logs,
     artifacts,
     approval,
+    useLocalDemoPairing,
     createPairing,
     connectMobile,
     submitTask,

@@ -11,7 +11,12 @@ import { TaskStore } from "./task-store.js";
 
 export function buildServer() {
   const app = Fastify({ logger: true });
-  const pairings = new PairingStore();
+  const pairings = new PairingStore({
+    enabled: config.DEV_PAIRING_ENABLED,
+    deviceId: config.DEV_DEVICE_ID,
+    agentToken: config.DEV_AGENT_TOKEN,
+    mobileToken: config.DEV_MOBILE_TOKEN
+  });
   const tasks = new TaskStore();
   const relay = new RelayHub(pairings, tasks);
 

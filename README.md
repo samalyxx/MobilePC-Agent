@@ -28,7 +28,7 @@ The included deterministic demo planner opens Notepad, types `hello from mobile 
 
 PeekWin install options are documented upstream: <https://github.com/usamaejaz/peekwin>
 
-## Quick Start
+## Easiest Local Demo Setup
 
 Clone the MVP branch:
 
@@ -49,15 +49,41 @@ If your shell has `NODE_ENV=production`, install dev dependencies explicitly bec
 npm install --include=dev
 ```
 
-Create local env files:
+Create local demo env files:
 
 ```bash
-cp apps/api/.env.example apps/api/.env
-cp apps/windows-agent/.env.example apps/windows-agent/.env
-cp apps/web/.env.example apps/web/.env
+npm run setup:local
 ```
 
-Build and verify:
+Start the API relay in terminal 1:
+
+```bash
+npm run dev:api
+```
+
+Start the Windows agent in terminal 2:
+
+```bash
+npm run dev:agent
+```
+
+Start the PWA in terminal 3:
+
+```bash
+npm run dev:web
+```
+
+Open `http://localhost:3000` on the PC first. Press:
+
+- `Use local demo pairing`
+- `Connect mobile socket`
+- `Run on PC`
+
+The demo should open Notepad, type `hello from mobile agent`, save it to the Desktop, and stream logs back to the page.
+
+For mobile testing, use the network URL Nuxt prints, usually `http://192.168.x.x:3000`. Do not use `localhost` on your phone, because that points at the phone instead of the PC.
+
+Build and verify when you are ready:
 
 ```bash
 npm run build
@@ -65,35 +91,10 @@ npm run typecheck
 npm run test
 ```
 
-Start the API relay:
-
-```bash
-npm run dev:api
-```
-
-By default the API listens on:
-
-- HTTP: `http://localhost:8787`
-- WebSocket: `ws://localhost:8787/ws`
-
-Start the mobile PWA in a second terminal:
-
-```bash
-npm run dev:web
-```
-
-Nuxt prints a local URL and a network URL. Open the network URL on your phone if your phone and computer are on the same network.
-
-Start the Windows agent in a third terminal after pairing:
-
-```bash
-npm run dev:agent
-```
-
-## Pairing A Device
+## Secure Pairing A Device
 
 1. Open the PWA.
-2. Press `Create pairing`.
+2. Press `Create secure pairing`.
 3. Copy the displayed `DEVICE_ID` and `AGENT_TOKEN`.
 4. Put those values in `apps/windows-agent/.env`:
 

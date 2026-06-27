@@ -10,4 +10,18 @@ describe("PairingStore", () => {
     expect(store.verify(secret.deviceId, secret.agentToken, "mobile")).toBe(false);
     expect(store.verify(secret.deviceId, secret.mobileToken, "mobile")).toBe(true);
   });
+
+  it("can verify the local development pairing", () => {
+    const store = new PairingStore({
+      enabled: true,
+      deviceId: "pc_local_demo",
+      agentToken: "agent-token",
+      mobileToken: "mobile-token"
+    });
+
+    expect(store.verify("pc_local_demo", "agent-token", "agent")).toBe(true);
+    expect(store.verify("pc_local_demo", "mobile-token", "mobile")).toBe(true);
+    expect(store.verify("pc_local_demo", "agent-token", "mobile")).toBe(false);
+    expect(store.verify("pc_other", "agent-token", "agent")).toBe(false);
+  });
 });

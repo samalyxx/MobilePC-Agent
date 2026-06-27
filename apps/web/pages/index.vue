@@ -22,14 +22,17 @@ const pc = useMobilePc();
           <div class="flex items-center justify-between gap-3">
             <div>
               <h2 class="text-lg font-semibold">Pairing</h2>
-              <p class="text-sm text-ink/60">Create a short-lived device secret for the Windows agent.</p>
+              <p class="text-sm text-ink/60">Use the local demo pairing for first-run testing, or create a secure short-lived pairing.</p>
             </div>
             <span class="rounded-full bg-signal/10 px-3 py-1 text-xs font-medium text-signal">{{ pc.status.value }}</span>
           </div>
 
           <div class="mt-4 grid gap-3">
-            <button class="rounded-md bg-ink px-4 py-3 text-sm font-semibold text-white active:scale-[0.99]" @click="pc.createPairing">
-              Create pairing
+            <button class="rounded-md bg-ink px-4 py-3 text-sm font-semibold text-white active:scale-[0.99]" @click="pc.useLocalDemoPairing">
+              Use local demo pairing
+            </button>
+            <button class="rounded-md border border-ink/15 px-4 py-3 text-sm font-semibold active:scale-[0.99]" @click="pc.createPairing">
+              Create secure pairing
             </button>
             <button class="rounded-md border border-ink/15 px-4 py-3 text-sm font-semibold active:scale-[0.99]" :disabled="!pc.mobileToken.value" @click="pc.connectMobile">
               Connect mobile socket
