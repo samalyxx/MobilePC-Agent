@@ -1,0 +1,34 @@
+{
+  "name": "mobilepc-agent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI-powered mobile-first remote computer control system using a local Windows agent and PeekWin.",
+  "license": "MIT",
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm -w @mobilepc/shared run build && npm -w @mobilepc/api run build && npm -w @mobilepc/windows-agent run build && npm -w @mobilepc/web run build",
+    "dev:api": "npm -w @mobilepc/api run dev",
+    "dev:agent": "npm -w @mobilepc/windows-agent run dev",
+    "dev:web": "npm -w @mobilepc/web run dev",
+    "demo:agent": "npm -w @mobilepc/windows-agent run demo",
+    "test": "npm -w @mobilepc/shared run build && npm -w @mobilepc/shared run test && npm -w @mobilepc/api run test && npm -w @mobilepc/windows-agent run test",
+    "typecheck": "npm -w @mobilepc/shared run typecheck && npm -w @mobilepc/api run typecheck && npm -w @mobilepc/windows-agent run typecheck && npm -w @mobilepc/web run typecheck"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.7",
+    "typescript": "^5.7.3",
+    "vite": "^7.3.6",
+    "vitest": "^4.1.9"
+  },
+  "overrides": {
+    "esbuild": "^0.28.1",
+    "vite": "^7.3.6"
+  },
+  "engines": {
+    "node": ">=20.11"
+  }
+}
