@@ -2,6 +2,8 @@ import cors from "@fastify/cors";
 import rateLimit from "@fastify/rate-limit";
 import websocket from "@fastify/websocket";
 import Fastify from "fastify";
+import { fileURLToPath } from "node:url";
+import path from "node:path";
 import { config } from "./config.js";
 import { PairingStore } from "./pairing.js";
 import { RelayHub } from "./relay.js";
@@ -28,7 +30,11 @@ export function buildServer() {
   return app;
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+const isEntrypoint = process.argv[1]
+  ? fileURLToPath(import.meta.url) === path.resolve(process.argv[1])
+  : false;
+
+if (isEntrypoint) {
   const app = buildServer();
   await app.listen({ host: config.API_HOST, port: config.API_PORT });
 }
