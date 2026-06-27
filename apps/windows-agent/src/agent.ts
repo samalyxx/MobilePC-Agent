@@ -25,19 +25,36 @@ export class WindowsAgent {
   connect(): void {
     this.socket = new WebSocket(this.options.wsUrl);
     this.socket.on("open", () => {
+      console.log(`[agent] connected to ${this.options.wsUrl}; sending hello for ${this.options.deviceId}`);
       this.send({ type: "hello", role: "agent", deviceId: this.options.deviceId, token: this.options.token });
     });
     this.socket.on("message", (raw) => {
       const message = ServerMessageSchema.parse(JSON.parse(raw.toString()));
       void this.handle(message);
     });
-    this.socket.on("close", () => {
+    this.socket.on("error", (error) => {
+      console.error(`[agent] websocket error: ${error.message}`);
+    });
+    this.socket.on("close", (code, reason) => {
+      const detail = reason.toString() || "no reason";
+      console.warn(`[agent] disconnected (${code}: ${detail}); retrying in 3s`);
       setTimeout(() => this.connect(), 3000);
     });
   }
 
   private async handle(message: ServerMessage): Promise<void> {
+    if (message.type === "welcome") {
+      console.log(`[agent] paired as ${message.deviceId}`);
+      return;
+    }
+
+    if (message.type === "error") {
+      console.error(`[agent] server error ${message.code}: ${message.message}`);
+      return;
+    }
+
     if (message.type === "task:assigned") {
+      console.log(`[agent] assigned ${message.taskId}: ${message.prompt}`);
       await this.runTask(message.taskId, message.prompt);
       return;
     }
@@ -87,6 +104,7 @@ export class WindowsAgent {
     if (!risk) return true;
     if (risk === "low" && this.options.autoApproveLowRisk) return true;
     const reason = action.type === "approvalRequest" ? action.reason : `Approve ${risk} action: ${action.type}`;
+    console.warn(`[agent] waiting for ${risk} approval: ${reason}`);
     this.send({ type: "agent:approval", taskId, reason, risk });
     return new Promise((resolve) => this.approvalResolvers.set(taskId, resolve));
   }
@@ -98,6 +116,10 @@ export class WindowsAgent {
   }
 
   private log(taskId: string, level: "debug" | "info" | "warn" | "error", message: string, data?: unknown): void {
+    const line = `[agent] ${taskId} ${level}: ${message}`;
+    if (level === "error") console.error(line);
+    else if (level === "warn") console.warn(line);
+    else console.log(line);
     this.send({ type: "agent:log", taskId, level, message, data });
   }
 
